@@ -109,7 +109,7 @@ def answer_query_with_context(
 
     return response["choices"][0]["text"].strip(" \n")
 
-# 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
+
 ##################### STREAMLIT APP #######################
 
 st.markdown('<h1>Youtube GPT 🤖<small>by Isma<small </h1>', unsafe_allow_html=True)
