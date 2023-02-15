@@ -107,7 +107,7 @@ def answer_query_with_context(
                 **COMPLETIONS_API_PARAMS
             )
 
-    return response["choices"][0]["text"].strip(" \n")
+    return response["choices"][0]["text"].strip(" \n"), prompt
 
 
 ##################### STREAMLIT APP #######################
@@ -194,7 +194,8 @@ with tab4:
     user_input = get_text()
     
     if user_input:
-        output = answer_query_with_context(user_input, df, video_embeddings)
+        output, prompt = answer_query_with_context(user_input, df, video_embeddings)
+        st.write('Output for chatgpt: {}'.format(prompt))
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
     if st.session_state['generated']:
