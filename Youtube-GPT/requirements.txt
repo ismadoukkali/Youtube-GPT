@@ -12,3 +12,4 @@ streamlit_chat
 openai
 pinecone-client
 python-dotenv
+tiktoken
