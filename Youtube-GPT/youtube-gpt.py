@@ -153,12 +153,12 @@ with tab2:
             stream = streams.first()
             stream.download(filename='audios.mp4')
             video_title = streams[0].title
-            output = model.transcribe(r'C:\Users\ismae\Personal-Projects\Youtube-GPT\audios.mp4')
+            output = model.transcribe(r'\Youtube-GPT\audios.mp4')
             loading_text_2 = st.text('Loading database...')
             df = create_database(output, video_title)
             st.write(df.head(20))
             flag = True
-            loading_text_2.text('DONE! Here your transcribed text! from the following video: {} '.format(url))
+            loading_text_2.text('DONE! Here your transcribed text! From the following video: {} '.format(url))
             loading_text.empty()
 
 with tab3:
