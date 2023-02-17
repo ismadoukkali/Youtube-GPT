@@ -7,6 +7,7 @@ import numpy as np
 import tiktoken
 import validators
 from transformers import GPT2TokenizerFast
+import os
 from streamlit_chat import message
 
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -151,6 +152,8 @@ with tab2:
             youtube_video = YouTube(url)
             streams = youtube_video.streams.filter(only_audio=True)
             stream = streams.first()
+            if os.path.exists('audios.mp4'):
+                os.remove('audios.mp4')
             stream.download(filename='audios.mp4')
             video_title = streams[0].title
             output = model.transcribe('audios.mp4')
