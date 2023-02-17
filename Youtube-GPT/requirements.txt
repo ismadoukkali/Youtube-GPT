@@ -13,3 +13,4 @@ openai
 pinecone-client
 python-dotenv
 tiktoken
+os
