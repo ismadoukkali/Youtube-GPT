@@ -7,7 +7,6 @@ import numpy as np
 import tiktoken
 import validators
 from transformers import GPT2TokenizerFast
-import os
 from streamlit_chat import message
 
 EMBEDDING_MODEL = "text-embedding-ada-002"
