@@ -115,26 +115,26 @@ def answer_query_with_context(
 st.markdown('<h1>Youtube GPT 🤖<small>by Isma<small </h1>', unsafe_allow_html=True)
 st.write("Start a chat with any Youtube video you would like. You just need to add your OpenAI API Key, paste your desired Youtube Video to transcribe and then enjoy chatting with the Bot in the 'Chat with the video tab' .")
 
-api= st.text_input("OpenAI API key, How to get it [here]('https://platform.openai.com/account/api-keys')", type = "password")
+api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
 openai.api_key = api
 
 tab1, tab2, tab3, tab4 = st.tabs(["Intro", "Transcription", "Embedding", "Chat with the Video"])
 flag = False
 with tab1:
     st.markdown("### How does it work?")
-    st.markdown('Read the following py notebook to know how it works: [Notebook]("")')
+    st.markdown('Read the following py notebook to know how it works: [Notebook](https://github.com/ismadoukkali/Youtube-GPT/blob/main/youtube-gpt-explanation.ipynb)')
     st.write("Youtube GPT was written with the following tools:")
     st.markdown("#### Streamlit")
-    st.write("The design was written with [Streamlit]('https://streamlit.io/').")
+    st.write("The design was written with [Streamlit](https://streamlit.io/).")
     st.markdown("#### Whisper")
     st.write("Video transcription is done by [OpenAI Whisper]('https://openai.com/blog/whisper/').")
     st.markdown("#### Embedding")
     st.write('[Embedding]("https://platform.openai.com/docs/guides/embeddings") is done via the OpenAI API with "text-embedding-ada-002"')
     st.markdown("#### GPT-3")
-    st.write('The chat uses the OpenAI API with the [GPT-3]("https://platform.openai.com/docs/models/gpt-3") model "text-davinci-003""')
+    st.write('The chat uses the OpenAI API with the [GPT-3](https://platform.openai.com/docs/models/gpt-3) model "text-davinci-003""')
     st.markdown("""---""")
     st.write('Author: [Ismael Doukkali](https://www.linkedin.com/in/ismael-doukkali/)')
-    st.write('Repo: [Github]()')
+    st.write('Repo: [Github](https://github.com/ismadoukkali/Youtube-GPT)')
 
 with tab2:
     model = whisper.load_model('base')
@@ -194,6 +194,7 @@ with tab4:
     user_input = get_text()
     
     if user_input:
+        loading_text_3 = st.text('Sending query to chatgpt, this can take a couple of seconds...')
         output, prompt = answer_query_with_context(user_input, df, video_embeddings)
         st.write('Output for chatgpt: {}'.format(prompt))
         st.session_state['past'].append(user_input)
