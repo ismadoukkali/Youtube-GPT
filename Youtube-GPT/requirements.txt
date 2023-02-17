@@ -13,4 +13,3 @@ openai
 pinecone-client
 python-dotenv
 tiktoken
-sudo apt-get install ffmpeg
