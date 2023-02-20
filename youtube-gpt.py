@@ -138,8 +138,8 @@ with tab2:
     model = whisper.load_model('base')
     st.header("Transcription:")
     st.write('Disclaimer: The whisper transcription model will take a couple of minutes transcribing your video. The longer the video, the longer the wait.')
-    url = st.text_input("Video URL", value="")
     api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
+    url = st.text_input("Video URL", value="")
     openai.api_key = api
     if len(url) > 1:
         if not validators.url(url):
