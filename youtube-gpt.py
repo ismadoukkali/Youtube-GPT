@@ -115,8 +115,6 @@ def answer_query_with_context(
 st.markdown('<h1>Youtube GPT 🤖<small>by Isma<small </h1>', unsafe_allow_html=True)
 st.write("Start a chat with any Youtube video you would like. You just need to add your OpenAI API Key, paste your desired Youtube Video to transcribe and then enjoy chatting with the Bot in the 'Chat with the video tab' .")
 
-api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
-openai.api_key = api
 
 tab1, tab2, tab3, tab4 = st.tabs(["Intro", "Transcription", "Embedding", "Chat with the Video"])
 flag = False
@@ -141,6 +139,8 @@ with tab2:
     st.header("Transcription:")
     st.write('Disclaimer: The whisper transcription model will take a couple of minutes transcribing your video. The longer the video, the longer the wait.')
     url = st.text_input("Video URL", value="")
+    api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
+    openai.api_key = api
     if len(url) > 1:
         if not validators.url(url):
             st.write('Enter a valid URL')
@@ -169,10 +169,11 @@ with tab3:
         st.text('Here an example entry, all loaded succesfully')
         st.write(str(f"{example_entry[0]} : {example_entry[1][:5]}... ({len(example_entry[1])} entries)"))
     else:
-        st.text('Data not available yet... head to "Trascription" tab and insert URL')
+        st.text('Data not available yet... head to "Trascription" tab and insert URL & OpenAI API')
 
 
 with tab4:
+    st.header("Chat with the video:")
     MAX_SECTION_LEN = 500
     SEPARATOR = "\n* "
     ENCODING = "gpt2"  # encoding for text-davinci-003
@@ -180,26 +181,30 @@ with tab4:
     encoding = tiktoken.get_encoding(ENCODING)
     separator_len = len(encoding.encode(SEPARATOR))
     
-    if 'generated' not in st.session_state:
-        st.session_state['generated'] = []
+    if not flag:
+        st.text('Data not available yet... head to "Trascription" tab and insert URL & OpenAI API')
+    
+    else:
+        if 'generated' not in st.session_state:
+            st.session_state['generated'] = []
 
-    if 'past' not in st.session_state:
-        st.session_state['past'] = []
-    
-    def get_text():
-        if api:
-            st.header("Ask me something about the video:")
-            input_text = st.text_input("You: ","", key="input")
-            return input_text
-    user_input = get_text()
-    
-    if user_input:
-        loading_text_3 = st.text('Sending query to chatgpt, this can take a couple of seconds...')
-        output, prompt = answer_query_with_context(user_input, df, video_embeddings)
-        st.write('Output for chatgpt: {}'.format(prompt))
-        st.session_state['past'].append(user_input)
-        st.session_state['generated'].append(output)
-    if st.session_state['generated']:
-        for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i))
-            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+        if 'past' not in st.session_state:
+            st.session_state['past'] = []
+        
+        def get_text():
+            if api:
+                st.header("Ask me something about the video:")
+                input_text = st.text_input("You: ","", key="input")
+                return input_text
+        user_input = get_text()
+        
+        if user_input:
+            loading_text_3 = st.text('Sending query to chatgpt, this can take a couple of seconds...')
+            output, prompt = answer_query_with_context(user_input, df, video_embeddings)
+            # st.write('Output for chatgpt: {}'.format(prompt))
+            st.session_state['past'].append(user_input)
+            st.session_state['generated'].append(output)
+        if st.session_state['generated']:
+            for i in range(len(st.session_state['generated'])-1, -1, -1):
+                message(st.session_state["generated"][i], key=str(i))
+                message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
