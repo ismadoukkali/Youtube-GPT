@@ -112,10 +112,19 @@ def answer_query_with_context(
 
 ##################### STREAMLIT APP #######################
 
-st.markdown('<h1>Youtube GPT 🤖<small>by Isma<small </h1>', unsafe_allow_html=True)
+st.markdown('<h1>ChatGPT x Youtube 🤖<small>by Isma<small </h1>', unsafe_allow_html=True)
 st.write("Start a chat with any Youtube video you would like. You just need to add your OpenAI API Key, paste your desired Youtube Video to transcribe and then enjoy chatting with the Bot in the 'Chat with the video tab' .")
-
-
+api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
+url = st.text_input("Video URL", value="")
+if len(url)> 0:
+    if not validators.url(url):
+                st.write('Enter a valid URL')
+                url = st.text_input("Video URL", value="")
+                st.experimental_rerun()
+if url and api:
+    start_analysis = st.button("Start Analysis")
+    if start_analysis:
+        st.text('Analising')
 tab1, tab2, tab3, tab4 = st.tabs(["Intro", "Transcription", "Embedding", "Chat with the Video"])
 flag = False
 with tab1:
@@ -138,15 +147,9 @@ with tab2:
     model = whisper.load_model('base')
     st.header("Transcription:")
     st.write('Disclaimer: The whisper transcription model will take a couple of minutes transcribing your video. The longer the video, the longer the wait.')
-    api= st.text_input("OpenAI API key, How to get it [here](https://platform.openai.com/account/api-keys)", type = "password")
-    url = st.text_input("Video URL", value="")
     openai.api_key = api
-    if len(url) > 1:
-        if not validators.url(url):
-            st.write('Enter a valid URL')
-            url = st.text_input("Video URL", value="")
-            st.experimental_rerun()
-        else:
+    if url and api:
+        if start_analysis:
             loading_text = st.text('Transcribing, this can take a couple of minutes...')
             youtube_video = YouTube(url)
             streams = youtube_video.streams.filter(only_audio=True)
@@ -154,17 +157,22 @@ with tab2:
             stream.download(filename='audios.mp4')
             video_title = streams[0].title
             output = model.transcribe('audios.mp4')
+            st.write(youtube_video.title)
+            st.video(url)
             loading_text_2 = st.text('Loading database...')
             df = create_database(output, video_title)
-            st.write(df.head(20))
+            df.to_csv('transcription.csv', index=False)
+            st.write(df.sample(20))
             flag = True
             loading_text_2.text('DONE! Here your transcribed text! From the following video: {} '.format(url))
             loading_text.empty()
+            
 
 with tab3:
     st.header("Embeddings:")
     if flag:
         video_embeddings = compute_doc_embeddings(df)
+        pd.DataFrame(video_embeddings).to_csv('word_embeddings.csv') 
         example_entry = list(video_embeddings.items())[0]
         st.text('Here an example entry, all loaded succesfully')
         st.write(str(f"{example_entry[0]} : {example_entry[1][:5]}... ({len(example_entry[1])} entries)"))
@@ -181,7 +189,11 @@ with tab4:
     encoding = tiktoken.get_encoding(ENCODING)
     separator_len = len(encoding.encode(SEPARATOR))
     
-    if not flag:
+    
+    df = pd.read_csv ('transcription.csv')
+    video_embeddings = compute_doc_embeddings(df)
+
+    if not url and not api:
         st.text('Data not available yet... head to "Trascription" tab and insert URL & OpenAI API')
     
     else:
