@@ -190,13 +190,14 @@ with tab4:
     separator_len = len(encoding.encode(SEPARATOR))
     
     
-    df = pd.read_csv ('transcription.csv')
-    video_embeddings = compute_doc_embeddings(df)
+    
 
     if not url and not api:
         st.text('Data not available yet... head to "Trascription" tab and insert URL & OpenAI API')
     
     else:
+        df = pd.read_csv ('transcription.csv')
+        video_embeddings = compute_doc_embeddings(df)
         if 'generated' not in st.session_state:
             st.session_state['generated'] = []
 
